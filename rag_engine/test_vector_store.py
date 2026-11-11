@@ -34,6 +34,9 @@ embeddings = generator.generate_embeddings(texts)
 # Step 4: Connect to ChromaDB
 store = VectorStore()
 
+store.collection.delete(
+    where={"paper_id": "paper_001"}
+)
 
 # Step 5: Store chunks and embeddings
 store.add_documents(chunks, embeddings)

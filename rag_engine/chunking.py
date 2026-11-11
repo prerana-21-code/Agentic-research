@@ -1,4 +1,7 @@
 
+import re
+
+
 def create_chunks(
     text,
     paper_id,
@@ -7,11 +10,8 @@ def create_chunks(
     chunk_size=500,
     overlap=100
 ):
-    """
-    Divide research-paper text into smaller chunks.
-    Preserve information about the original paper.
-    """
 
+    # Validate input
     if not isinstance(text, str) or not text.strip():
         raise ValueError("Research text cannot be empty.")
 
@@ -23,27 +23,68 @@ def create_chunks(
             "Overlap must be non-negative and smaller than chunk size."
         )
 
+    # Step 1: Split text into sentences
+    sentences = re.split(r'(?<=[.!?])\s+', text.strip())
+
+    sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
+
     chunks = []
-    start = 0
+    current_sentences = []
     chunk_number = 1
 
-    while start < len(text):
+    # Step 2: Group complete sentences into chunks
+    for sentence in sentences:
 
-        end = start + chunk_size
+        candidate = " ".join(current_sentences + [sentence])
 
-        chunk_text = text[start:end]
+        if current_sentences and len(candidate) > chunk_size:
 
-        chunk = {
+            # Save the current chunk
+            chunk_text = " ".join(current_sentences)
+
+            chunks.append({
+                "chunk_id": f"{paper_id}_chunk_{chunk_number}",
+                "paper_id": paper_id,
+                "paper_title": paper_title,
+                "page_number": page_number,
+                "text": chunk_text
+            })
+
+            chunk_number += 1
+
+            # Step 3: Preserve overlapping sentences
+            overlap_sentences = []
+            overlap_length = 0
+
+            for previous_sentence in reversed(current_sentences):
+
+                required_length = len(previous_sentence)
+
+                if overlap_sentences:
+                    required_length += 1
+
+                if overlap_length + required_length <= overlap:
+                    overlap_sentences.insert(0, previous_sentence)
+                    overlap_length += required_length
+
+                else:
+                    break
+                
+            current_sentences = overlap_sentences
+
+        current_sentences.append(sentence)
+
+    # Step 4: Store the final remaining chunk
+    if current_sentences:
+
+        chunk_text = " ".join(current_sentences)
+
+        chunks.append({
             "chunk_id": f"{paper_id}_chunk_{chunk_number}",
             "paper_id": paper_id,
             "paper_title": paper_title,
             "page_number": page_number,
             "text": chunk_text
-        }
-
-        chunks.append(chunk)
-
-        chunk_number += 1
-        start += chunk_size - overlap
+        })
 
     return chunks

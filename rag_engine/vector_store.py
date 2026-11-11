@@ -39,7 +39,7 @@ class VectorStore:
                 "page_number": chunk["page_number"]
             })
 
-        self.collection.add(
+        self.collection.upsert(
             ids=ids,
             documents=documents,
             embeddings=embeddings.tolist(),

@@ -1,25 +1,29 @@
 
-from .chunking import create_chunks
+from rag_engine.chunking import create_chunks
 
-sample_text = """
-Artificial Intelligence is transforming healthcare.
-Deep learning models are increasingly used for medical
-image analysis. CNN models can identify patterns in
-X-ray images. These models can help doctors detect
-diseases earlier.
+
+research_text = """
+Deep learning is widely used in medical image analysis.
+Convolutional neural networks help detect diseases from X-ray images.
+Machine learning models can improve disease classification.
+Natural language processing helps analyse research papers.
 """
 
+
 chunks = create_chunks(
-    text=sample_text,
-    paper_id="P001",
-    paper_title="AI in Healthcare",
+    text=research_text,
+    paper_id="paper_001",
+    paper_title="Deep Learning in Medical Image Analysis",
     page_number=1,
-    chunk_size=100,
-    overlap=20
+    chunk_size=120,
+    overlap=75
 )
+
+
+print("\n----- SENTENCE-AWARE CHUNKING RESULTS -----")
 
 for chunk in chunks:
     print("\nChunk ID:", chunk["chunk_id"])
-    print("Paper:", chunk["paper_title"])
-    print("Page:", chunk["page_number"])
     print("Text:", chunk["text"])
+    print("Character count:", len(chunk["text"]))
+    print("Paper ID:", chunk["paper_id"])
