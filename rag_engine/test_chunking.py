@@ -1,5 +1,5 @@
 
-from chunking import create_chunks
+from .chunking import create_chunks
 
 sample_text = """
 Artificial Intelligence is transforming healthcare.
