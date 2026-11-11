@@ -1,0 +1,16 @@
+
+Paper ID: paper_005
+
+Title: Natural Language Processing for Biomedical Research
+
+Abstract:
+Natural Language Processing (NLP) helps researchers extract useful information from large collections of biomedical documents.
+
+Techniques such as Named Entity Recognition, text classification, keyword extraction, and relation extraction can identify diseases, medications, genes, and medical procedures from scientific literature.
+
+Transformer-based language models can analyse biomedical text and support automated literature reviews.
+
+NLP systems can also identify research trends, summarize scientific findings, and extract relationships between medical concepts.
+
+Challenges include complex medical terminology, limited annotated datasets, and the need to verify automatically extracted information against original research sources.
+

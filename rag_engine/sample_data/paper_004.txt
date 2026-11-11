@@ -1,0 +1,15 @@
+
+Paper ID: paper_004
+
+Title: Machine Learning Methods for Disease Prediction
+
+Abstract:
+Machine learning techniques are widely applied to predict diseases using patient information and clinical datasets.
+
+Algorithms such as Decision Trees, Random Forest, Support Vector Machines, and Logistic Regression can identify patterns in medical records and estimate disease risk.
+
+Common input features include patient age, blood pressure, glucose levels, cholesterol, and medical history.
+
+Feature selection and data preprocessing are important for improving prediction performance. Class imbalance and missing clinical values remain major challenges in developing reliable disease prediction systems.
+
+Unlike medical image classification, traditional machine learning approaches often work with structured clinical data rather than X-ray or MRI images.

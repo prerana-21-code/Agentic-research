@@ -1,0 +1,14 @@
+
+Paper ID: paper_001
+
+Title: Deep Learning Techniques for Medical Image Classification
+
+Abstract:
+Medical image classification is an important application of artificial intelligence in healthcare. Deep learning techniques can automatically identify patterns in medical images and support disease diagnosis.
+
+Convolutional Neural Networks (CNNs) are widely used for analysing X-ray images, MRI scans, and CT scans. CNN models learn visual features from medical images and classify them into different disease categories.
+
+Machine learning techniques can improve classification performance by identifying patterns in medical imaging datasets. Data preprocessing and image augmentation can also help improve model generalisation.
+
+The study highlights the importance of deep learning in medical image analysis and discusses challenges such as limited labelled datasets and model interpretability.
+

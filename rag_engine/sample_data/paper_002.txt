@@ -1,0 +1,13 @@
+
+Paper ID: paper_002
+
+Title: Transformer-Based Models for Medical Image Analysis
+
+Abstract:
+Transformer architectures have gained attention in medical image analysis because of their ability to capture long-range relationships in visual data.
+
+Vision Transformers divide medical images into smaller patches and process them using self-attention mechanisms. This approach can identify important relationships between different regions of an image.
+
+Transformer-based models have been explored for tumour segmentation, organ detection, and disease classification using MRI and CT scans.
+
+However, these models often require large training datasets and significant computational resources. Combining CNNs with transformers may improve feature extraction and classification performance.

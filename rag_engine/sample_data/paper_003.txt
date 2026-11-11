@@ -1,0 +1,13 @@
+
+Paper ID: paper_003
+
+Title: Deep Learning Approaches for Brain Tumour Detection
+
+Abstract:
+Brain tumour detection using magnetic resonance imaging (MRI) is an important application of artificial intelligence in medical diagnosis.
+
+Convolutional Neural Networks can automatically extract features from MRI images and classify brain scans into categories such as glioma, meningioma, pituitary tumour, and no tumour.
+
+Image preprocessing techniques such as resizing, normalization, and augmentation help improve the quality of training data.
+
+Deep learning models can support radiologists by identifying suspicious regions in medical images. However, model performance depends on dataset quality, image resolution, and the availability of labelled medical scans.
