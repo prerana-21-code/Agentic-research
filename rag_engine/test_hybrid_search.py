@@ -1,3 +1,5 @@
+
+from rag_engine.paper_loader import load_papers
 from rag_engine.chunking import create_chunks
 from rag_engine.embeddings import EmbeddingGenerator
 from rag_engine.vector_store import VectorStore
@@ -5,66 +7,71 @@ from rag_engine.semantic_search import SemanticSearch
 from rag_engine.keyword_search import KeywordSearch
 from rag_engine.hybrid_search import HybridSearch
 
+# 1. Load all papers
+papers = load_papers()
 
-# Step 1: Sample research paper
-research_text = """
-Deep learning is widely used in medical image analysis.
-Convolutional neural networks help detect diseases
-from X-ray images and MRI scans.
-Machine learning models can improve disease classification.
-"""
+# 2. Generate chunks
+all_chunks = []
 
+for paper in papers:
+    chunks = create_chunks(
+        text=paper["text"],
+        paper_id=paper["paper_id"],
+        paper_title=paper["paper_title"],
+        page_number=1,
+        chunk_size=500,
+        overlap=100
+    )
+    all_chunks.extend(chunks)
 
-# Step 2: Create chunks
-chunks = create_chunks(
-    text=research_text,
-    paper_id="paper_001",
-    paper_title="Deep Learning in Medical Image Analysis",
-    page_number=1,
-    chunk_size=100,
-    overlap=20
-)
-
-
-# Step 3: Initialize embedding generator
+# 3. Prepare embeddings
 generator = EmbeddingGenerator()
+texts = [chunk["text"] for chunk in all_chunks]
+embeddings = generator.generate_embeddings(texts)
 
-
-# Step 4: Initialize ChromaDB
+# 4. Refresh the sample paper records in ChromaDB
 store = VectorStore()
 
+store.collection.delete(
+    where={
+        "paper_id": {
+            "$in": [paper["paper_id"] for paper in papers]
+        }
+    }
+)
 
-# Step 5: Initialize semantic search
+store.add_documents(all_chunks, embeddings)
+
+# 5. Initialize both retrieval systems
 semantic_engine = SemanticSearch(store, generator)
+keyword_engine = KeywordSearch(all_chunks)
 
-
-# Step 6: Initialize BM25 search
-keyword_engine = KeywordSearch(chunks)
-
-
-# Step 7: Combine both search engines
+# 6. Initialize hybrid search
 hybrid_engine = HybridSearch(
     semantic_engine,
     keyword_engine
 )
 
+# 7. Research questions
+questions = [
+    "How are CNNs used to detect diseases in MRI images?",
+    "How do Vision Transformers analyse medical images?",
+    "What techniques are used for brain tumour detection?",
+    "Which machine learning algorithms predict disease risk?",
+    "How is NLP used to analyse biomedical research papers?"
+]
 
-# Step 8: Research question
-query = "What AI techniques are used to detect diseases from medical images?"
+# 8. Perform hybrid retrieval
+for query in questions:
+    print("\n" + "=" * 65)
+    print("RESEARCH QUESTION:", query)
+    print("=" * 65)
 
+    results = hybrid_engine.search(query, top_k=3)
 
-# Step 9: Perform hybrid search
-results = hybrid_engine.search(query, top_k=3)
-
-
-# Step 10: Display final results
-print("\nRESEARCH QUESTION:", query)
-print("\n----- HYBRID SEARCH RESULTS -----")
-
-for i, result in enumerate(results):
-
-    print(f"\nResult {i + 1}")
-    print("Chunk ID:", result["chunk_id"])
-    print("Research text:", result["text"])
-    print("RRF Score:", round(result["rrf_score"], 6))
-    print("Metadata:", result["metadata"])
+    for rank, result in enumerate(results, start=1):
+        print(f"\nResult {rank}")
+        print("Chunk ID:", result["chunk_id"])
+        print("Paper:", result["metadata"]["paper_title"])
+        print("RRF Score:", round(result["rrf_score"], 6))
+        print("Text:", result["text"])

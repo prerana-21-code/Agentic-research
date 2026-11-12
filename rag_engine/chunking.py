@@ -24,7 +24,9 @@ def create_chunks(
         )
 
     # Step 1: Split text into sentences
-    sentences = re.split(r'(?<=[.!?])\s+', text.strip())
+    clean_text = re.sub(r'\s+', ' ', text.strip())
+
+    sentences = re.split(r'(?<=[.!?])\s+', clean_text)
 
     sentences = [sentence.strip() for sentence in sentences if sentence.strip()]
 
@@ -69,7 +71,7 @@ def create_chunks(
 
                 else:
                     break
-                
+
             current_sentences = overlap_sentences
 
         current_sentences.append(sentence)
