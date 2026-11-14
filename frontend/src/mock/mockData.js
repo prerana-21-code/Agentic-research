@@ -22,36 +22,44 @@ export const MOCK_CORPUS_STATS = {
 
 export const MOCK_MODULE_STATUSES = [
   {
+    id: 'fastapi_bridge',
+    name: 'FastAPI Backend API',
+    subtext: 'http://127.0.0.1:8000/api',
+    status: 'Not Connected',
+    statusType: 'disconnected',
+    details: 'Backend service offline or awaiting initialization.',
+  },
+  {
+    id: 'paper_processing',
+    name: 'Paper Processing (Member 1)',
+    subtext: 'OpenAlex, PyMuPDF, NLP Analyzer',
+    status: 'Awaiting Backend',
+    statusType: 'disconnected',
+    details: 'Requires live FastAPI service on port 8000.',
+  },
+  {
     id: 'rag_engine',
-    name: 'RAG Core Engine',
+    name: 'RAG Core Engine (Member 2)',
     subtext: 'rag_engine module primitives',
-    status: 'Demo Mode',
-    statusType: 'demo', // 'demo' | 'disconnected' | 'connected'
-    details: 'Python algorithms verified in tests; awaiting live backend service.',
+    status: 'Awaiting Backend',
+    statusType: 'disconnected',
+    details: 'Requires live FastAPI service on port 8000.',
   },
   {
     id: 'vector_store',
     name: 'ChromaDB Vector Store',
     subtext: 'Persistent collection: research_papers',
-    status: 'Demo Mode',
-    statusType: 'demo',
-    details: 'Initialized with 11 sample chunks; live sync inactive.',
+    status: 'Awaiting Backend',
+    statusType: 'disconnected',
+    details: 'Requires live FastAPI service on port 8000.',
   },
   {
     id: 'bm25_index',
     name: 'BM25 Keyword Index',
     subtext: 'rank_bm25 Okapi tokenizer',
-    status: 'Demo Mode',
-    statusType: 'demo',
-    details: 'In-memory index loaded for sample papers; live updates inactive.',
-  },
-  {
-    id: 'fastapi_bridge',
-    name: 'FastAPI Backend API',
-    subtext: 'http://localhost:8000/api',
-    status: 'Not Connected',
+    status: 'Awaiting Backend',
     statusType: 'disconnected',
-    details: 'Backend service pending initialization in next phase.',
+    details: 'Requires live FastAPI service on port 8000.',
   },
 ];
 

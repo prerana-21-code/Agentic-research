@@ -1,14 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MOCK_CORPUS_STATS } from '../../mock/mockData';
 
 export default function StatsOverview() {
+  const [corpusData, setCorpusData] = useState(MOCK_CORPUS_STATS);
+  const [isLive, setIsLive] = useState(false);
+
+  useEffect(() => {
+    const fetchStats = () => {
+      fetch('/api/corpus/stats')
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.json();
+        })
+        .then((data) => {
+          setCorpusData({
+            totalPapers: data.total_papers,
+            indexedChunks: data.indexed_chunks,
+            embeddingDimension: data.embedding_dimension,
+            embeddingModel: data.embedding_model,
+            fusionStrategy: data.fusion_strategy,
+            isLive: true,
+          });
+          setIsLive(true);
+        })
+        .catch((err) => {
+          console.warn('Could not fetch live corpus stats, showing baseline demo data:', err);
+        });
+    };
+
+    fetchStats();
+    const interval = setInterval(fetchStats, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
   const stats = [
     {
       id: 'papers',
       label: 'Sample Papers',
-      value: MOCK_CORPUS_STATS.totalPapers,
-      subtext: 'Pre-loaded in sample_data',
-      tag: 'DEMO DATA',
+      value: corpusData.totalPapers,
+      subtext: isLive ? 'Indexed in ChromaDB' : 'Pre-loaded in sample_data',
+      tag: isLive ? 'LIVE CORPUS' : 'DEMO DATA',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/>
@@ -19,9 +50,9 @@ export default function StatsOverview() {
     {
       id: 'chunks',
       label: 'Indexed Chunks',
-      value: MOCK_CORPUS_STATS.indexedChunks,
+      value: corpusData.indexedChunks,
       subtext: 'Sentence-aware (500c/100o)',
-      tag: 'DEMO DATA',
+      tag: isLive ? 'LIVE CORPUS' : 'DEMO DATA',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect width="8" height="8" x="3" y="3" rx="2"/>
@@ -35,9 +66,9 @@ export default function StatsOverview() {
     {
       id: 'embeddings',
       label: 'Vector Dimensions',
-      value: `${MOCK_CORPUS_STATS.embeddingDimension}d`,
-      subtext: MOCK_CORPUS_STATS.embeddingModel,
-      tag: 'DEMO DATA',
+      value: `${corpusData.embeddingDimension}d`,
+      subtext: corpusData.embeddingModel,
+      tag: isLive ? 'LIVE CORPUS' : 'DEMO DATA',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
@@ -49,8 +80,8 @@ export default function StatsOverview() {
       id: 'fusion',
       label: 'Fusion Strategy',
       value: 'RRF (k=60)',
-      subtext: 'ChromaDB + BM25 Okapi',
-      tag: 'DEMO DATA',
+      subtext: corpusData.fusionStrategy || 'ChromaDB + BM25 Okapi',
+      tag: isLive ? 'LIVE CORPUS' : 'DEMO DATA',
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10"/>
@@ -64,15 +95,17 @@ export default function StatsOverview() {
 
   return (
     <div style={{ marginBottom: '24px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <h2 style={{ fontSize: '15px', fontWeight: '600', color: 'var(--text-primary)' }}>
             Corpus Statistics
           </h2>
-          <span className="badge badge-demo">Sample / Demo Data</span>
+          <span className={`badge ${isLive ? 'badge-emerald' : 'badge-demo'}`}>
+            {isLive ? 'Live RAG Corpus' : 'Sample / Demo Data'}
+          </span>
         </div>
         <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-          Actual measured latency & live counts will display after backend integration
+          {isLive ? 'Live data connected from data/chroma_db' : 'Awaiting backend connection'}
         </span>
       </div>
 
@@ -95,7 +128,7 @@ export default function StatsOverview() {
               >
                 {stat.icon}
               </div>
-              <span className="badge badge-demo" style={{ fontSize: '9px', padding: '1px 6px' }}>
+              <span className={`badge ${isLive ? 'badge-cyan' : 'badge-demo'}`} style={{ fontSize: '9px', padding: '1px 6px' }}>
                 {stat.tag}
               </span>
             </div>
